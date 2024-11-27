@@ -1,6 +1,6 @@
 <?php
 
-namespace Domain\Healthcheck\Http\Controllers;
+namespace Domain\HealthCheck\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
