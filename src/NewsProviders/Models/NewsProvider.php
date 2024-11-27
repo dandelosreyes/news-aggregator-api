@@ -1,0 +1,16 @@
+<?php
+
+namespace Domain\NewsProviders\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class NewsProvider extends Model
+{
+	use SoftDeletes;
+
+	protected $fillable = [
+		'name',
+		'slug',
+	];
+}
