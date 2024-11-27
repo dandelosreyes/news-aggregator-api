@@ -1,25 +1,20 @@
 <?php
 
-namespace Domain\Users\Http\Request;
+namespace Domain\Authentication\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterUserRequest extends FormRequest
+class LoginUserRequest extends FormRequest
 {
 	public function rules(): array
 	{
 		return [
-			'name' => [
-				'required'
-			],
 			'email' => [
 				'required',
-				'email',
-				'unique:users,email'
+				'exists:users,email',
 			],
 			'password' => [
-				'required',
-				'min:8'
+				'required'
 			]
 		];
 	}

@@ -1,10 +1,9 @@
 <?php
 
-namespace Domain\Users\Http\Controllers;
+namespace Domain\Authentication\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Domain\Users\Http\Request\LoginUserRequest;
-use Illuminate\Http\Request;
+use Domain\Authentication\Http\Request\LoginUserRequest;
 
 class LoginController extends Controller
 {
