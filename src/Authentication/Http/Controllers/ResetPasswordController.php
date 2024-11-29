@@ -5,17 +5,20 @@ namespace Domain\Authentication\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Domain\Authentication\Http\Request\ResetPasswordRequest;
 use Domain\Users\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
+/**
+ * @tags Auth
+ */
 class ResetPasswordController extends Controller
 {
     /**
+     * Reset Password
+     *
      * @unauthenticated
      *
-     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(

@@ -2,13 +2,17 @@
 
 namespace Domain\Articles\Models;
 
+use Domain\Articles\Observers\ArticleObserver;
 use Domain\Authors\Models\Author;
 use Domain\Categories\Models\Category;
+use Domain\Keywords\Models\Keyword;
 use Domain\NewsProviders\Models\NewsProvider;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy(ArticleObserver::class)]
 class Article extends Model
 {
     use SoftDeletes;
@@ -41,8 +45,13 @@ class Article extends Model
         return $this->belongsToMany(Category::class, 'article_categories');
     }
 
-	public function authors()
-	{
-		return $this->belongsToMany(Author::class, 'article_authors');
-	}
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class, 'article_authors');
+    }
+
+    public function keywords()
+    {
+        return $this->belongsToMany(Keyword::class, 'article_keywords');
+    }
 }

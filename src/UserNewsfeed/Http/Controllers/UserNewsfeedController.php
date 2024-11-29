@@ -3,62 +3,76 @@
 namespace Domain\UserNewsfeed\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Domain\Articles\Http\Resources\GetArticleResource;
 use Domain\Articles\Models\Article;
+use Domain\UserNewsfeed\Http\Requests\UserNewsfeedRequest;
 use Domain\UserNewsfeed\Http\Resources\UserNewsfeedCollection;
-use Illuminate\Http\Request;
+use Domain\UserNewsfeed\Repositories\UserNewsfeedRepository;
+use Illuminate\Http\JsonResponse;
 
+/**
+ * @tags Newsfeed
+ */
 class UserNewsfeedController extends Controller
 {
-	/**
-	 * @param  Request  $request
-	 * @return UserNewsfeedCollection|\Illuminate\Http\JsonResponse
-	 */
-	public function index(
-		Request $request
-	)
-	{
-		$perPage = $request->get('per_page', 10);
+    /**
+     * Get the user's newsfeed
+     *
+     * Returns a paginated list of articles based on the user's preferences. If the user has not yet set their preferences it returns all the articles
+     *
+     * @operationId Get User Newsfeed
+     *
+     * @route GET /api/v1/newsfeed
+     *
+     * @middleware: auth:api
+     *
+     * @return UserNewsfeedCollection|JsonResponse
+     */
+    public function index(
+        UserNewsfeedRequest $request,
+        UserNewsfeedRepository $userNewsfeedRepository
+    ) {
+        $categories = $request->get('categories');
+        $keywords = $request->get('keywords');
+        $perPage = $request->get('per_page', 10);
+        $publishedAt = $request->get('published_at');
+        $providers = $request->get('sources');
 
-		auth()->user()->loadMissing([
-			'preferredCategories', 'preferredNewsProviders', 'preferredAuthors'
-		]);
+        $user = auth()->user();
 
-		$user = auth()->user();
+        $articles = $userNewsfeedRepository->getNewsfeed(
+            user: $user,
+            perPage: $perPage
+        );
 
-		$preferredCategories = $user->preferredCategories;
-		$preferredNewsProvider = $user->preferredNewsProviders;
-		$preferredAuthors = $user->preferredAuthors;
+        if ($articles->isEmpty()) {
+            return response()->json([
+                'message' => 'No articles found. Kindly adjust your preferences.',
+            ]);
+        }
 
-		$articles = Article::query()
-			->with([
-				'authors', 'categories', 'newsProvider'
-			])
-			->when($preferredCategories, function ($query) use ($preferredCategories) {
-				return $query->whereHas('categories', function ($query) use ($preferredCategories) {
-					$query->whereIn('category_id', $preferredCategories->pluck('id'));
-				});
-			})
-			->when($preferredNewsProvider, function ($query) use ($preferredNewsProvider) {
-				return $query->whereHas('newsProvider', function ($query) use ($preferredNewsProvider) {
-					$query->whereIn('news_provider_id', $preferredNewsProvider->pluck('id'));
-				});
-			})
-			->when($preferredAuthors, function ($query) use ($preferredAuthors) {
-				return $query->whereHas('authors', function ($query) use ($preferredAuthors) {
-					foreach ($preferredAuthors as $author) {
-						$query->orWhereLike('name', "%" . $author . "%");
-					}
-				});
-			})
-			->orderBy('published_at', 'desc')
-			->paginate($perPage);
+        return new UserNewsfeedCollection($articles);
+    }
 
-		if ($articles->isEmpty()) {
-			return response()->json([
-				'message' => 'No articles found. Kindly adjust your preferences.'
-			]);
-		}
+    /**
+     * Get a specific article
+     *
+     * @route GET /api/v1/newsfeed/{article_unique_id}
+     *
+     * @operationId Get Specific Article
+     *
+     * @response GetArticleResource
+     *
+     * @return GetArticleResource
+     */
+    public function show($id)
+    {
+        $article = Article::where('article_unique_id', $id)
+            ->with([
+                'authors', 'categories', 'newsProvider',
+            ])
+            ->first();
 
-		return new UserNewsfeedCollection($articles);
-	}
+        return GetArticleResource::make($article);
+    }
 }

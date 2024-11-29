@@ -11,9 +11,18 @@
 |
 */
 
-pest()->extend(Tests\TestCase::class)
+use Tests\PestTestCase;
+
+pest()->extend(PestTestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature', 'Unit');
+    ->in('Feature', 'Unit', 'Architecture');
+
+beforeEach(function () {
+	$this->artisan('cache:clear');
+	$this->artisan('config:clear');
+	$this->artisan('route:clear');
+	$this->artisan('view:clear');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +50,3 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}

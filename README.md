@@ -18,3 +18,7 @@ For Both Environments (Docker or Laravel Herd)
 1. The software design for this project is based on Domain Driven Design (DDD). We are organizing the system into separate domains to address specific business needs, while also decoupling the code from the default framework. This approach allows us to avoid the complexity of modifying the entire codebase when switching frameworks, updating framework versions, or making major changes to the existing system.
 2. I utilized spatie/laravel-data for managing data transfer objects (DTOs), which helps us handle the data exchanged between different layers of the application. This package enables us to establish a single source of truth for the data, ensuring consistency and preventing duplication across the application.
 3. As for the documentation I used [dedoc/scramble](https://scramble.dedoc.co/) which is an OpenAPI documentation generato for laravel. It automatically generates OpenAPI Docs without require for us to manually write PHPDOc Annotations
+
+### Notes:
+1. Since we are using multiple providers for fetching news article. I purposely used the original link to the specific article to avoid any duplication of articles/data. 
+2. On fetching of a specific article, we used our own custom id instead of the default id and slug of the article. This is to avoid any conflict with the original article id and slug.

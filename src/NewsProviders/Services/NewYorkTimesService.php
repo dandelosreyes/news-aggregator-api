@@ -26,7 +26,7 @@ class NewYorkTimesService implements NewsProviderServiceInterface
         $this->saveArticleAction = new SaveArticleAction;
     }
 
-    public function reduceRateLimit()
+    public function reduceRateLimit(): void
     {
         $this->ensureRateLimitIsSet();
 
@@ -35,21 +35,21 @@ class NewYorkTimesService implements NewsProviderServiceInterface
         Cache::set(self::NEW_YORK_TIMES_RATE_LIMIT, $currentRateLimit - 1);
     }
 
-    public function ensureRateLimitIsSet()
+    public function ensureRateLimitIsSet(): void
     {
         if (! Cache::has(self::NEW_YORK_TIMES_RATE_LIMIT)) {
             $this->rateLimit();
         }
     }
 
-    public function rateLimit()
+    public function rateLimit(): int
     {
         return Cache::remember(self::NEW_YORK_TIMES_RATE_LIMIT, now()->addDay(), function () {
             return 500;
         });
     }
 
-    public function baseEndpoint()
+    public function baseEndpoint(): string
     {
         return 'https://api.nytimes.com/svc/topstories/v2/';
     }

@@ -7,7 +7,7 @@ use function Pest\Laravel\postJson;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->route = route('v1.auth.login');
+    $this->route = route('api.v1.auth.login');
 });
 
 it('can allow user to login', function () {

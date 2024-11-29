@@ -7,10 +7,17 @@ use Domain\Authentication\Http\Request\ForgotPasswordRequest;
 use Domain\Users\Models\User;
 use Illuminate\Support\Facades\Password;
 
+/**
+ * @tags Auth
+ */
 class ForgotPasswordController extends Controller
 {
     /**
+     * Forgot Password
+     *
      * @unauthenticated
+     *
+     * @operationId Forgot Password
      *
      * @return \Illuminate\Http\JsonResponse
      */

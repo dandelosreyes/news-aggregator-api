@@ -5,6 +5,7 @@ namespace Domain\NewsProviders\Actions;
 use Domain\Articles\Models\Article;
 use Domain\Authors\Actions\UpsertAuthorAction;
 use Domain\Categories\Actions\UpsertCategoryAction;
+use Domain\Keywords\Actions\UpsertKeywordAction;
 use Domain\NewsProviders\DTO\NewYorkTimes\TopStoriesDTO;
 use Domain\NewsProviders\Models\NewsProvider;
 use Illuminate\Support\Str;
@@ -18,11 +19,12 @@ class SaveArticleAction
 
     public function execute(
         TopStoriesDTO $articleDTO
-    ) {
+    ): Article {
         if ($articleDTO instanceof TopStoriesDTO) {
-            $this->processTopStories($articleDTO);
+            return $this->processTopStories($articleDTO);
         }
 
+        return new Article;
     }
 
     private function processTopStories(TopStoriesDTO $articleDTO)
@@ -47,12 +49,12 @@ class SaveArticleAction
         ]);
 
         $authors = Str::of($articleDTO->byline)
+            ->lower()
+            ->replace('by ', '')
             ->explode('and')
             ->map(function ($name) {
-				$name = Str::of($name)
-					->trim()
-					->lower()
-					->replace('by ', '');
+                $name = Str::of($name)
+                    ->trim();
 
                 return (new UpsertAuthorAction)->execute($name);
             })
@@ -67,8 +69,15 @@ class SaveArticleAction
             })
             ->pluck('id');
 
-	    $article->authors()->sync($authors);
+        $keywords = collect($articleDTO->desFacet)
+            ->map(fn ($keyword) => (new UpsertKeywordAction)->execute($keyword));
+
+        $article->authors()->sync($authors);
 
         $article->categories()->sync($categoriesId);
+
+        $article->keywords()->sync($keywords);
+
+        return $article;
     }
 }
