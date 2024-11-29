@@ -11,7 +11,7 @@ use function Laravel\Prompts\confirm;
 
 class AddNewsProviderCredentialsCommand extends Command
 {
-	protected $signature = 'add:news-provider-credentials';
+	protected $signature = 'news-provider:add-credentials';
 
 	protected $description = 'Command description';
 
@@ -49,8 +49,8 @@ class AddNewsProviderCredentialsCommand extends Command
 		}
 
 		$newsProvider->credentials()->create([
-			'api_key' => Crypt::encryptString($apiKey),
-			'secret_key' => Crypt::encryptString($secretKey),
+			'api_key' => $apiKey !== null ? Crypt::encryptString($apiKey) : null,
+			'secret_key' => $secretKey !== null ? Crypt::encryptString($secretKey) : null,
 		]);
 
 		$this->info('Credentials added successfully!');

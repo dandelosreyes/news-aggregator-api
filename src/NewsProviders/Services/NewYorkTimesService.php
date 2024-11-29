@@ -89,7 +89,7 @@ class NewYorkTimesService implements NewsProviderServiceInterface
         return $results->map(function ($result) {
             $newYorkTimesDTO = TopStoriesDTO::from($result);
 
-            $this->saveArticleAction->execute($newYorkTimesDTO);
+            $this->saveArticleAction->onQueue()->execute($newYorkTimesDTO);
         })->toArray();
     }
 
@@ -102,9 +102,9 @@ class NewYorkTimesService implements NewsProviderServiceInterface
         });
 
         return [
-            'api_key' => $credential->api_key ?
+            'api_key' => $credential?->api_key ?
                 Crypt::decryptString($credential->api_key) : null,
-            'secret_key' => $credential->secret_key ? Crypt::decryptString($credential->secret_key) : null,
+            'secret_key' => $credential?->secret_key ? Crypt::decryptString($credential->secret_key) : null,
         ];
     }
 

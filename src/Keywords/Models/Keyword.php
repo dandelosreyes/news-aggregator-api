@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Regex\Helpers\Str;
+use Illuminate\Support\Str;
 
 #[ObservedBy(KeywordObserver::class)]
 class Keyword extends Model

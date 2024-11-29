@@ -29,7 +29,7 @@ Route::prefix('user')
     ->middleware('auth:sanctum')
     ->group(function () {
         Route::get('/', \Domain\Authentication\Http\Controllers\AuthController::class)
-            ->name('user');
+            ->name('me');
         Route::apiResource('/preferences', \Domain\UserPreferences\Http\Controllers\UserPreferenceController::class)
             ->except([
                 'destroy', 'show', 'update',

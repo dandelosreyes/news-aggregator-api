@@ -3,6 +3,7 @@
 namespace Domain\Keywords\Actions;
 
 use Domain\Keywords\Models\Keyword;
+use Illuminate\Support\Str;
 use Spatie\QueueableAction\QueueableAction;
 
 class UpsertKeywordAction
@@ -14,6 +15,8 @@ class UpsertKeywordAction
     public function execute(
         string $name
     ) {
-        return Keyword::firstOrCreate(compact('name'));
+        return Keyword::createOrFirst([
+			'name' => Str::slug($name),
+        ]);
     }
 }

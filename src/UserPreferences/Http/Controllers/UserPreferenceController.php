@@ -9,9 +9,16 @@ use Domain\UserPreferences\Actions\UpdatePreferredCategoriesAction;
 use Domain\UserPreferences\Actions\UpdatePreferredNewsProviderAction;
 use Domain\UserPreferences\Http\Request\UpdateUserPreferenceRequest;
 
+/**
+ * @tags User Preference
+ */
 class UserPreferenceController extends Controller
 {
     /**
+     * Get User Preferences
+     *
+     * @operationId Get User Preferences
+     *
      * @response array{message: string, data: { news_providers: array, categories: array, authors: array }}
      *
      * @return \Illuminate\Http\JsonResponse
@@ -31,6 +38,15 @@ class UserPreferenceController extends Controller
         ]);
     }
 
+    /**
+     * Update User Preferences
+     *
+     * @operationId Update User Preferences
+     *
+     * @response array{message: string}
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(
         UpdateUserPreferenceRequest $request,
         UpdatePreferredNewsProviderAction $updatePreferredNewsProviderAction,

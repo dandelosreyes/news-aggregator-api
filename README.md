@@ -22,3 +22,4 @@ For Both Environments (Docker or Laravel Herd)
 ### Notes:
 1. Since we are using multiple providers for fetching news article. I purposely used the original link to the specific article to avoid any duplication of articles/data. 
 2. On fetching of a specific article, we used our own custom id instead of the default id and slug of the article. This is to avoid any conflict with the original article id and slug.
+3. The filtering of incoming data from the providers are not properly implemented since the instructions is lacking of what to filter and not to filter.
