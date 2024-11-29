@@ -7,7 +7,7 @@ Route::name('api.')
 		Route::prefix('v1')
 			->name('v1.')
 			->group(function () {
-				require_once 'api/v1.php';
+				require 'api/v1.php';
 			});
 	});
 

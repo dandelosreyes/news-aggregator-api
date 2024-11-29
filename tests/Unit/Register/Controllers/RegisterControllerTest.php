@@ -27,8 +27,5 @@ it('can\'t register a new user with incomplete details', function () {
 	];
 
 	postJson(route('api.v1.auth.register'), $user)
-		->assertJsonStructure([
-			'message', 'user',
-		])
-		->assertOk();
+		->assertJsonValidationErrors();
 });
