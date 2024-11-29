@@ -16,6 +16,12 @@ Route::prefix('auth')
         Route::post('/reset-password', \Domain\Authentication\Http\Controllers\ResetPasswordController::class);
     });
 
+Route::apiResource('newsfeed', \Domain\UserNewsfeed\Http\Controllers\UserNewsfeedController::class)
+	->middleware('auth:sanctum')
+	->only([
+		'index',
+	]);
+
 Route::prefix('user')
     ->name('user.')
     ->middleware('auth:sanctum')

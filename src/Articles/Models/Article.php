@@ -2,6 +2,8 @@
 
 namespace Domain\Articles\Models;
 
+use Domain\Authors\Models\Author;
+use Domain\Categories\Models\Category;
 use Domain\NewsProviders\Models\NewsProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,4 +35,14 @@ class Article extends Model
             'published_at' => 'datetime',
         ];
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'article_categories');
+    }
+
+	public function authors()
+	{
+		return $this->belongsToMany(Author::class, 'article_authors');
+	}
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8930b8147132de69e403b0b11382f76",
+    "content-hash": "a6748bb201ffdb64e654d7ff20e29e89",
     "packages": [
         {
             "name": "amphp/amp",
@@ -5164,6 +5164,91 @@
                 }
             ],
             "time": "2024-11-18T15:02:02+00:00"
+        },
+        {
+            "name": "spatie/laravel-queueable-action",
+            "version": "2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-queueable-action.git",
+                "reference": "cc9273121c90d99623570199cc52bcf4699835bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-queueable-action/zipball/cc9273121c90d99623570199cc52bcf4699835bf",
+                "reference": "cc9273121c90d99623570199cc52bcf4699835bf",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "orchestra/testbench": "^6.23|^7.0|^8.0|^9.0",
+                "pestphp/pest": "^1.22|^2.34",
+                "pestphp/pest-plugin-laravel": "^1.3|^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\QueueableAction\\QueueableActionServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\QueueableAction\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Roose",
+                    "email": "brent@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Alex Vanderbist",
+                    "email": "alex@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Queueable action support in Laravel",
+            "homepage": "https://github.com/spatie/laravel-queueable-action",
+            "keywords": [
+                "laravel-queueable-action",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-queueable-action/issues",
+                "source": "https://github.com/spatie/laravel-queueable-action/tree/2.15.0"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
+            ],
+            "time": "2024-02-27T12:08:08+00:00"
         },
         {
             "name": "spatie/php-structure-discoverer",
