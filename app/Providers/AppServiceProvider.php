@@ -5,6 +5,7 @@ namespace App\Providers;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -35,5 +36,7 @@ class AppServiceProvider extends ServiceProvider
                 SecurityScheme::http('bearer')
             );
         });
+
+        Model::shouldBeStrict();
     }
 }

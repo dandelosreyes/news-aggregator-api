@@ -2,12 +2,14 @@
 
 namespace Domain\Articles\Models;
 
+use Database\Factories\ArticleFactory;
 use Domain\Articles\Observers\ArticleObserver;
 use Domain\Authors\Models\Author;
 use Domain\Categories\Models\Category;
 use Domain\Keywords\Models\Keyword;
 use Domain\NewsProviders\Models\NewsProvider;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[ObservedBy(ArticleObserver::class)]
 class Article extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'article_unique_id',
@@ -27,6 +29,11 @@ class Article extends Model
         'featured_image_url',
         'summary',
     ];
+
+    protected static function newFactory()
+    {
+        return ArticleFactory::new();
+    }
 
     public function newsProvider(): BelongsTo
     {

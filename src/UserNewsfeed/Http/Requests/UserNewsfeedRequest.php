@@ -40,6 +40,12 @@ class UserNewsfeedRequest extends FormRequest
             'sources.*' => [
                 'string',
             ],
+            'authors' => [
+                'nullable', 'array',
+            ],
+            'authors.*' => [
+                'string',
+            ],
         ];
     }
 

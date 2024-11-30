@@ -1,6 +1,5 @@
 <?php
 
-use Domain\NewsProviders\Actions\SaveArticleAction;
 use Domain\NewsProviders\Models\NewsProvider;
 use Domain\NewsProviders\Models\NewsProviderCredential;
 use Domain\NewsProviders\Services\NewYorkTimesService;
@@ -11,17 +10,17 @@ use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     Cache::flush();
-	Queue::fake();
+    Queue::fake();
 
     $this->newsProvider = NewsProvider::factory()->create(['name' => 'New York Times']);
 });
 
 it('sets the initial rate limit if not already set', function () {
     $service = App::make(NewYorkTimesService::class);
-	$service->ensureRateLimitIsSet();
+    $service->ensureRateLimitIsSet();
 
     expect(Cache::has(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT))->tobeTrue()
-	    ->and(Cache::get(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT))->toBe(500);
+        ->and(Cache::get(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT))->toBe(500);
 });
 
 it('reduces the rate limit correctly', function () {
@@ -35,31 +34,46 @@ it('reduces the rate limit correctly', function () {
 });
 
 it('fetches credentials correctly', function () {
-    $credential = NewsProviderCredential::factory()
-	    ->create([
-        'news_provider_id' => $this->newsProvider->id,
-        'api_key' => Crypt::encryptString('it-api-key'),
-        'secret_key' => Crypt::encryptString('it-secret-key'),
-    ]);
+    NewsProviderCredential::factory()
+        ->create([
+            'news_provider_id' => $this->newsProvider->id,
+            'api_key' => Crypt::encryptString('it-api-key'),
+            'secret_key' => Crypt::encryptString('it-secret-key'),
+        ]);
 
     $service = App::make(NewYorkTimesService::class);
 
     $credentials = $service->getCredentials();
 
-    expect($credentials['api_key'])->toBe('it-api-key')
-	    ->and($credentials['secret_key'])->toBe('it-secret-key');
+    expect($credentials->apiKey)->toBe('it-api-key')
+        ->and($credentials->secretKey)->toBe('it-secret-key');
 });
 
 it('fetches top stories and saves articles', closure: function (int $status, array $responseBody) {
-	$newsProviders = NewsProvider::factory()
-		->create(['name' => 'New York Times']);
+    Cache::shouldReceive('has')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT)
+        ->andReturn(500);
 
-	NewsProviderCredential::factory()
-		->create([
-			'news_provider_id' => $newsProviders->id,
-			'api_key' => Crypt::encryptString('it-api-key'),
-			'secret_key' => Crypt::encryptString('it-secret-key')
-		]);
+    Cache::shouldReceive('get')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST)
+        ->andReturn(
+            now()->subSeconds(12)
+        );
+
+    $newsProviders = NewsProvider::factory()
+        ->create(['name' => 'New York Times']);
+
+    $newsProviderCredential = NewsProviderCredential::factory()
+        ->create([
+            'news_provider_id' => $newsProviders->id,
+            'api_key' => Crypt::encryptString('it-api-key'),
+            'secret_key' => Crypt::encryptString('it-secret-key'),
+        ]);
+
+    Cache::shouldReceive('remember')
+        ->andReturn(
+            $newsProviderCredential
+        );
 
     Http::fake([
         'https://api.nytimes.com/*' => Http::response($responseBody, $status),
@@ -67,24 +81,47 @@ it('fetches top stories and saves articles', closure: function (int $status, arr
 
     $service = App::make(NewYorkTimesService::class);
 
-	$stories = $service->getTopStories('movies');
+    Cache::shouldReceive('put')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST, \Mockery::type(\Illuminate\Support\Carbon::class))
+        ->andReturn(true);
+
+    Cache::shouldReceive('get')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT)
+        ->andReturn(500);
+
+    Cache::shouldReceive('set')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT, 499)
+        ->andReturn(true);
+
+    $stories = $service->getNews('movies');
 
     expect($stories)
-	    ->toHaveCount($responseBody['num_results'])
-	    ->and(Http::recorded())
-	    ->toHaveCount(1);
+        ->toHaveCount($responseBody['num_results'])
+        ->and(Http::recorded())
+        ->toHaveCount(1);
 })->with('newYorkTimesTopArticles');
 
 it('enforces timeout between requests', function () {
+    Cache::shouldReceive('has')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_RATE_LIMIT)
+        ->andReturn(500);
+
+    Cache::shouldReceive('get')
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST)
+        ->andReturn(
+            now()->subSeconds(12)
+        );
+
     $service = App::make(NewYorkTimesService::class);
 
-    Cache::put(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST, now()->subSeconds(5));
-
-    $start = now();
+    Cache::shouldReceive('put')
+        ->once()
+        ->with(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST, \Mockery::type(\Illuminate\Support\Carbon::class))
+        ->andReturn(true);
 
     $service->ensureTimeoutPerRequestIsEnforced();
 
-    $end = now();
+    $lastRequest = Cache::get(NewYorkTimesService::NEW_YORK_TIMES_LAST_REQUEST);
 
-    expect($start->diffInSeconds(date: $end))->toBeGreaterThanOrEqual(12);
+    expect($lastRequest->diffInSeconds(now()))->toBeGreaterThanOrEqual(12);
 });

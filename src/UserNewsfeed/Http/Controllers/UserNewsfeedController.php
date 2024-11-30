@@ -33,16 +33,22 @@ class UserNewsfeedController extends Controller
         UserNewsfeedRepository $userNewsfeedRepository
     ) {
         $categories = $request->get('categories');
-        $keywords = $request->get('keywords');
+        $query = $request->get('query');
         $perPage = $request->get('per_page', 10);
         $publishedAt = $request->get('published_at');
         $providers = $request->get('sources');
+        $authors = $request->get('authors');
 
         $user = auth()->user();
 
         $articles = $userNewsfeedRepository->getNewsfeed(
             user: $user,
-            perPage: $perPage
+            perPage: $perPage,
+            categories: $categories,
+            providers: $providers,
+            authors: $authors,
+            publishedAt: $publishedAt,
+            query: $query
         );
 
         if ($articles->isEmpty()) {

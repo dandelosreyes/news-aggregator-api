@@ -2,19 +2,21 @@
 
 namespace Domain\NewsProviders\Interfaces;
 
+use Domain\NewsProviders\DTO\NewsProviders\GetCredentialsDTO;
+
 interface NewsProviderServiceInterface
 {
-	public function baseEndpoint();
+    public function baseEndpoint(): string;
 
-	public function getCredentials();
+    public function getCredentials(): GetCredentialsDTO;
 
-	public function getNews(string $query);
+    public function getNews(string $query);
 
-	public function rateLimit();
+    public function rateLimit(): int;
 
-	public function reduceRateLimit();
+    public function reduceRateLimit(): void;
 
-	public function ensureRateLimitIsSet();
+    public function ensureRateLimitIsSet(): void;
 
-	public function ensureTimeoutPerRequestIsEnforced();
+    public function ensureTimeoutPerRequestIsEnforced(): void;
 }
